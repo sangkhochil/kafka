@@ -7,6 +7,7 @@ package com.sangkhochil.kafkalearning;
 public class App {
 	public static void main(String[] args) {
 //		new ProducerDemo().Producer();
-		new ProducerDemoWithCallBack().Producer();
+//		new ProducerDemoWithCallBack().Producer();
+		new ProducerDemoKeys().Producer();
 	}
 }

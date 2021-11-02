@@ -1,6 +1,7 @@
 package com.sangkhochil.kafkalearning;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -11,8 +12,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProducerDemoWithCallBack {
-	private static Logger logger = LoggerFactory.getLogger(ProducerDemoWithCallBack.class);
+public class ProducerDemoKeys {
+	private static Logger logger = LoggerFactory.getLogger(ProducerDemoKeys.class);
 	private String bootStrapServer = "127.0.0.1:9092";
 
 	public void Producer() {
@@ -26,24 +27,34 @@ public class ProducerDemoWithCallBack {
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(configs);
 
 		for (int i = 0; i < 10; i++) {
+			
+			String topic = "first_topic";
+			String value = "hello world key-" + i;
+			String key = "id-"+i;
+			logger.info("key = "+key);
 
 			// send data
-			ProducerRecord<String, String> record = new ProducerRecord<String, String>("first_topic",
-					"hello world with callback-" + i);
-			producer.send(record, new Callback() {
+			ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic,
+					key, value);
+			try {
+				producer.send(record, new Callback() {
 
-				@Override
-				public void onCompletion(RecordMetadata metadata, Exception exception) {
-					if (exception == null) {
-						logger.info("topic: " + metadata.topic() + "\n" + "partition: " + metadata.partition() + "\n"
-								+ "offset: " + metadata.offset() + "\n" + "timestamp: " + metadata.timestamp());
-					} else {
-						logger.error("error occure", exception);
+					@Override
+					public void onCompletion(RecordMetadata metadata, Exception exception) {
+						if (exception == null) {
+							logger.info("\ntopic: " + metadata.topic() + "\n" + "partition: " + metadata.partition() + "\n"
+									+ "offset: " + metadata.offset() + "\n" + "timestamp: " + metadata.timestamp());
+						} else {
+							logger.error("error occure", exception);
+						}
 					}
-				}
-			});
-		}
+				}).get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
 
+		}
+		
 		producer.flush();
 		producer.close();
 
