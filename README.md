@@ -131,3 +131,9 @@ kafka-topics --zookeeper 127.0.0.1:2181 --topic new_topic --describe
 	Topic: new_topic        TopicId: BrTVfSNVRM6hBi0nxOyzcg PartitionCount: 1       ReplicationFactor: 1    Configs:
 	        Topic: new_topic        Partition: 0    Leader: 0       Replicas: 0     Isr: 0
 
+
+
+### Bidirection Compability
+Means:
+Older kafka client can call to newer broker
+Newer kafka client can call to older broker
